@@ -11,13 +11,14 @@ topic_pub = "com/qnap/rajah/pot"
 
 
 #vals = ""
-
+"""
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
-
+"""
+"""
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
-
+"""
 def setup(resfile, sslpath):
 	global HOST, PORT, USER_NAME, USER_PASS, CLIENT_ID, PRIVATE_CERT, CLIENT_CERT, CA_CERT, RES_DATA
 	with open(resfile, 'r') as f:
@@ -35,8 +36,8 @@ def setup(resfile, sslpath):
 	#deal with file path
 
 	client = mqtt.Client(client_id=CLIENT_ID)
-	client.on_connect = on_connect
-	client.on_message = on_message
+	#client.on_connect = on_connect
+	#client.on_message = on_message
 
 	try:
 		arr_KEY = RES_DATA['privateCert'].split('/')
@@ -78,6 +79,14 @@ def sendoftype(typename, invalue, clobj):
 	resources = RES_DATA['resources']
 	for res in resources:
 		if (typename == str(res["resourcetypename"])) :
-			vals = "{\"value\":"+ invalue +"}"
+			vals = "{\"value\":"+ str(invalue) +"}"
 			print "NOW TOPIC_NAME :" + str(res["topic"]) + " MESSAGE : " + str(vals)
 			clobj.publish(str(res["topic"]), vals)
+
+def subscribeofid(id_name, clobj):
+	resources = RES_DATA['resources']
+	for res in resources:
+		if (id_name == str(res["resourceid"])) :
+			clobj.subscribe(str(res["topic"]))
+			print "add subscribe :" + str(res["topic"])
+			return str(res["topic"])

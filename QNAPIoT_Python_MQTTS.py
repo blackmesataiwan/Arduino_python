@@ -11,7 +11,19 @@ from bridgeclient import BridgeClient as bridgeclient
 bridge_client = bridgeclient()
 
 
-client = QIoT.setup('./res/resourceinfo.json', '/ssl/');
+client = QIoT.setup('./res/resourceinfo.json', '/ssl/')
+
+def on_connect(client, userdata, flags, rc):
+    global topic_LED
+    print("Connected with result code "+str(rc))
+    topic_LED = QIoT.subscribeofid("LED", client)
+
+def on_message(client, userdata, msg):
+    print(msg.topic+" "+str(msg.payload))
+
+client.on_connect = on_connect
+client.on_message = on_message
+
 
 while True:
 	h0 = bridge_client.get("humidity")
